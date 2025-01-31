@@ -18,7 +18,7 @@ def _uninstall_project(binpath: Path, project: Project) -> bool:
 def _choose_projects(projects: list[Project]) -> list[Project]:
     print("Choose projects to uninstall:")
     for i, project in enumerate(projects):
-        print(f"{i}. {project.name}")
+        print(f"{i} {project}")
     selected = input("Enter numbers separated by space: ")
     try:
         selected = [int(i) for i in selected.split()]

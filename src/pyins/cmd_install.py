@@ -5,6 +5,7 @@ from pathlib import Path
 from .config import load_config, save_config
 from .parser import get_project
 
+# Windows
 _BIN_PATH = ".venv\\Scripts"
 
 
@@ -42,7 +43,8 @@ def cmd_install(path: Path) -> bool:
         print(f"Project {project.name} already installed")
         return False
 
-    for script in project.scripts:
+    ctr = 0
+    for script in project.scripts[::-1]:  # this may be a bug.
         # Windows
         name = f"{script.name}.exe"
         src = project.path / _BIN_PATH / name
@@ -50,12 +52,16 @@ def cmd_install(path: Path) -> bool:
 
         succ, res = _install_script(src, dst)
         if not succ:
+            # remove item in a loop is not good.
+            project.scripts.remove(script)
             continue
         if res is not None:
             script.set_alias(res)
         print(f"Installed {script.name} as {res or script.name}")
+        ctr += 1
 
-    config.project.append(project)
-    save_config(config)
+    if ctr > 0:
+        config.project.append(project)
+        save_config(config)
 
     return True

@@ -1,0 +1,23 @@
+[project]
+name = "pyins"
+version = "0.1.0"
+description = "Python Install Scripts"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Jason Swift", email = "anemele@outlook.com" }]
+requires-python = ">=3.12"
+dependencies = ["mashumaro[toml]>=3.15"]
+
+[project.scripts]
+pyins = "pyins.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+
+[tool.ruff]
+target-version = 'py312'
+lint.select = ['I']

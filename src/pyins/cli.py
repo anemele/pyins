@@ -1,4 +1,11 @@
-"""pyins: Python Install Scripts"""
+"""pyins: Python Install Scripts
+
+There are 3 usages:
+
+- pyins <path to project>  install a project
+- pyins -l                 list installed projects
+- pyins -u <project name>  uninstall a project
+"""
 
 from pathlib import Path
 from typing import Optional
@@ -11,7 +18,9 @@ from .cmd_uninstall import cmd_uninstall
 def cli():
     import argparse
 
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawTextHelpFormatter
+    )
     parser.add_argument("path", nargs="?", type=Path, help="Path to the project")
     parser.add_argument(
         "-l", "--list", action="store_true", help="List installed projects"

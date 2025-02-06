@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from .config import Project, load_config, save_config
+from .parser import get_project
 
 
 def _uninstall_project(binpath: Path, project: Project) -> bool:
@@ -28,7 +29,7 @@ def _choose_projects(projects: list[Project]) -> list[Project]:
         return []
 
 
-def cmd_uninstall(name: str) -> bool:
+def _uninstall(name: str) -> bool:
     config = load_config()
 
     projects = [prj for prj in config.project if prj.name == name]
@@ -48,3 +49,16 @@ def cmd_uninstall(name: str) -> bool:
                 config.project.remove(project)
             save_config(config)
             return True
+
+
+def cmd_uninstall(name: str) -> bool:
+    path = Path(name)
+    if not path.is_dir():
+        return _uninstall(name)
+
+    project = get_project(path)
+    if project is None:
+        print(f"Failed to parse project: {path}")
+        return False
+
+    return _uninstall(project.name)

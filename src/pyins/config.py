@@ -36,6 +36,9 @@ class Config(DataClassTOMLMixin):
     binpath: Path
     project: list[Project] = field(default_factory=list)
 
+    def __post_init__(self):
+        self.binpath = self.binpath.expanduser()
+
     def __str__(self) -> str:
         s = [f"binpath = {self.binpath}\n"]
         s.extend(f"{prj}" for prj in self.project)

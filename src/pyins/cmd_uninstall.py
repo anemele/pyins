@@ -1,15 +1,16 @@
 from pathlib import Path
 
 from .config import Project, load_config, save_config
+from .consts import _SYSTEM, _WINDOWS
 from .parser import get_project
 
 
 def _uninstall_project(binpath: Path, project: Project) -> bool:
     for script in project.scripts:
-        if script.alias is not None:
-            pth = binpath / f"{script.alias}.exe"
-        else:
-            pth = binpath / f"{script.name}.exe"
+        name = script.alias or script.name
+        if _SYSTEM == _WINDOWS:
+            name += ".exe"
+        pth = binpath / name
         if not pth.exists():
             continue
         pth.unlink()

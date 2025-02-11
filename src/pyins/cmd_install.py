@@ -3,10 +3,8 @@ import shutil
 from pathlib import Path
 
 from .config import load_config, save_config
+from .consts import _SYSTEM, _WINDOWS, BIN_PATH
 from .parser import get_project
-
-# Windows
-_BIN_PATH = ".venv\\Scripts"
 
 
 def _install_script(src, dst: Path) -> tuple[bool, str | None]:
@@ -17,14 +15,15 @@ def _install_script(src, dst: Path) -> tuple[bool, str | None]:
         print(e)
         print("maybe not installed? try `pip install -e .`")
         return False, None
-    except FileExistsError as e:
-        print(e)
-        name = input("type a new name (empty to skip): ")
+    except FileExistsError:
+        print(f"{dst} exists.")
+        name = input("type a new name (empty to skip): ").strip()
         if name == "":
             return False, None
-        # Windows
-        name = name.removesuffix(".exe")
-        dst = dst.with_name(f"{name}.exe")
+        if _SYSTEM == _WINDOWS:
+            dst = dst.with_name(f"{name}.exe")
+        else:
+            dst = dst.with_name(name)
         _install_script(src, dst)
         return True, name
     except OSError:
@@ -45,9 +44,10 @@ def cmd_install(path: Path) -> bool:
 
     ctr = 0
     for script in project.scripts[::-1]:  # this may be a bug.
-        # Windows
-        name = f"{script.name}.exe"
-        src = project.path / _BIN_PATH / name
+        name = script.name
+        if _SYSTEM == _WINDOWS:
+            name += ".exe"
+        src = project.path / BIN_PATH / name
         dst = config.binpath / name
 
         succ, res = _install_script(src, dst)

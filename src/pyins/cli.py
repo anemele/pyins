@@ -28,7 +28,7 @@ def cli():
         "-l", "--list", action="store_true", help="List installed projects"
     )
     parser.add_argument("-u", "--uninstall", help="Uninstall a project")
-    parser.add_argument("-r", "--reinstall", help="Reinstall a project")
+    parser.add_argument("-r", "--reinstall", type=Path, help="Reinstall a project")
 
     args = parser.parse_args()
     # print(args)
@@ -37,7 +37,7 @@ def cli():
     path: Optional[Path] = args.path
     arg_list: bool = args.list
     arg_uninstall: str = args.uninstall
-    arg_reinstall: bool = args.reinstall
+    arg_reinstall: Path = args.reinstall
 
     if path is not None:
         cmd_install(path)

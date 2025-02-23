@@ -2,7 +2,7 @@ import os
 import shutil
 from pathlib import Path
 
-from .config import load_config, save_config
+from .config import Project, load_config, save_config
 from .consts import _SYSTEM, _WINDOWS, BIN_PATH
 from .parser import get_project
 
@@ -31,24 +31,14 @@ def _install_script(src, dst: Path) -> tuple[bool, str | None]:
         return True, None
 
 
-def cmd_install(path: Path) -> bool:
-    project = get_project(path)
-    if project is None:
-        print(f"Failed to parse project: {path}")
-        return False
-
-    config = load_config()
-    if any(prj.path == project.path for prj in config.project):
-        print(f"Project {project.name} already installed")
-        return False
-
+def _install_project(binpath: Path, project: Project) -> bool:
     ctr = 0
     for script in project.scripts[::-1]:  # this may be a bug.
         name = script.name
         if _SYSTEM == _WINDOWS:
             name += ".exe"
         src = project.path / BIN_PATH / name
-        dst = config.binpath / name
+        dst = binpath / name
 
         succ, res = _install_script(src, dst)
         if not succ:
@@ -60,8 +50,21 @@ def cmd_install(path: Path) -> bool:
         print(f"Installed {script.name} as {res or script.name}")
         ctr += 1
 
-    if ctr > 0:
+    return ctr > 0
+
+
+def cmd_install(path: Path) -> bool:
+    project = get_project(path)
+    if project is None:
+        print(f"Failed to parse project: {path}")
+        return False
+
+    config = load_config()
+    if any(prj.path == project.path for prj in config.project):
+        print(f"Project {project.name} already installed")
+        return False
+
+    if _install_project(config.binpath, project):
         config.project.append(project)
         save_config(config)
-
     return True

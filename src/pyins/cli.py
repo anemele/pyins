@@ -5,6 +5,7 @@ There are 3 usages:
 - pyins <path to project>  install a project
 - pyins -l                 list installed projects
 - pyins -u <project name>  uninstall a project
+- pyins -r <project name>  reinstall a project
 """
 
 from pathlib import Path
@@ -12,6 +13,7 @@ from typing import Optional
 
 from .cmd_install import cmd_install
 from .cmd_list import cmd_list
+from .cmd_reinstall import cmd_reinstall
 from .cmd_uninstall import cmd_uninstall
 
 
@@ -26,6 +28,7 @@ def cli():
         "-l", "--list", action="store_true", help="List installed projects"
     )
     parser.add_argument("-u", "--uninstall", help="Uninstall a project")
+    parser.add_argument("-r", "--reinstall", help="Reinstall a project")
 
     args = parser.parse_args()
     # print(args)
@@ -34,6 +37,7 @@ def cli():
     path: Optional[Path] = args.path
     arg_list: bool = args.list
     arg_uninstall: str = args.uninstall
+    arg_reinstall: bool = args.reinstall
 
     if path is not None:
         cmd_install(path)
@@ -41,6 +45,8 @@ def cli():
         cmd_list()
     elif arg_uninstall is not None:
         cmd_uninstall(arg_uninstall)
+    elif arg_reinstall:
+        cmd_reinstall(arg_reinstall)
     else:
         parser.print_help()
 

@@ -14,6 +14,7 @@ def _uninstall_project(binpath: Path, project: Project) -> bool:
         if not pth.exists():
             continue
         pth.unlink()
+        print(f"Uninstalled {name} of {project.name}.")
     return True
 
 

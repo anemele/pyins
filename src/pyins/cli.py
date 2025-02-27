@@ -9,7 +9,6 @@ There are 3 usages:
 """
 
 from pathlib import Path
-from typing import Optional
 
 from .cmd_install import cmd_install
 from .cmd_list import cmd_list
@@ -23,30 +22,31 @@ def cli():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
-    parser.add_argument("path", nargs="?", type=Path, help="Path to the project")
-    parser.add_argument(
-        "-l", "--list", action="store_true", help="List installed projects"
-    )
-    parser.add_argument("-u", "--uninstall", help="Uninstall a project")
-    parser.add_argument("-r", "--reinstall", type=Path, help="Reinstall a project")
+    cmd = parser.add_subparsers(dest="cmd")
+
+    cmd.add_parser("ls", help="List installed projects")
+
+    c_i = cmd.add_parser("i", help="Install a project")
+    c_i.add_argument("path", type=Path, help="Path to the project to install")
+
+    c_u = cmd.add_parser("u", help="Uninstall a project")
+    c_u.add_argument("name", help="Name of the project to uninstall")
+
+    c_r = cmd.add_parser("r", help="Reinstall a project")
+    c_r.add_argument("path", type=Path, help="Path to the project to reinstall")
 
     args = parser.parse_args()
     # print(args)
     # return
 
-    path: Optional[Path] = args.path
-    arg_list: bool = args.list
-    arg_uninstall: str = args.uninstall
-    arg_reinstall: Path = args.reinstall
-
-    if path is not None:
-        cmd_install(path)
-    elif arg_list:
+    if args.cmd == "ls":
         cmd_list()
-    elif arg_uninstall is not None:
-        cmd_uninstall(arg_uninstall)
-    elif arg_reinstall:
-        cmd_reinstall(arg_reinstall)
+    elif args.cmd == "i":
+        cmd_install(args.path)
+    elif args.cmd == "u":
+        cmd_uninstall(args.name)
+    elif args.cmd == "r":
+        cmd_reinstall(args.path)
     else:
         parser.print_help()
 

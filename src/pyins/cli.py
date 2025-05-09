@@ -1,12 +1,4 @@
-"""pyins: Python Install Scripts
-
-There are 3 usages:
-
-- pyins <path to project>  install a project
-- pyins -l                 list installed projects
-- pyins -u <project name>  uninstall a project
-- pyins -r <project name>  reinstall a project
-"""
+"""pyins: Python Install Scripts"""
 
 from pathlib import Path
 
